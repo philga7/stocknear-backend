@@ -37,7 +37,7 @@ aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 berlin_tz = pytz.timezone('Europe/Berlin')
-pb = PocketBase('http://127.0.0.1:8090')
+pb = PocketBase('http://pocketbase:8090')
 admin_data = pb.collection('_superusers').auth_with_password(pb_admin_email, pb_password)
 
 

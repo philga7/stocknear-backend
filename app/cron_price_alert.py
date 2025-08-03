@@ -27,7 +27,7 @@ pb_password = os.getenv('POCKETBASE_PASSWORD')
 
 
 berlin_tz = pytz.timezone('Europe/Berlin')
-pb = PocketBase('http://127.0.0.1:8090')
+pb = PocketBase('http://pocketbase:8090')
 admin_data = pb.collection('_superusers').auth_with_password(pb_admin_email, pb_password)
 
 # Define the URL and the API key

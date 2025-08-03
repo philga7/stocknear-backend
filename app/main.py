@@ -44,12 +44,12 @@ from slowapi.errors import RateLimitExceeded
 from functools import partial
 from datetime import datetime
 
-from functions import *
+from app.functions import *
 from openai import AsyncOpenAI
 from openai.types.responses import ResponseTextDeltaEvent
 from agents.stream_events import RunItemStreamEvent
 from agents import Agent, Runner, ModelSettings
-from llm.agents import *
+from app.llm.agents import *
 from contextlib import asynccontextmanager
 from hashlib import md5
 from bs4 import BeautifulSoup
@@ -139,7 +139,7 @@ def db_connection(db_name):
     conn.close()
 
 ################# Redis #################
-redis_client = redis.Redis(host='localhost', port=6380, db=0)
+redis_client = redis.Redis(host='redis', port=6379, db=0)
 redis_client.flushdb() # TECH DEBT
 caching_time = 3600*12 #Cache data for 12 hours
 
@@ -229,7 +229,11 @@ etf_con = sqlite3.connect('etf.db')
 
 load_dotenv()
 
-pb = PocketBase('http://127.0.0.1:8090')
+try:
+    pb = PocketBase('http://pocketbase:8090')
+except Exception as e:
+    print(f"Warning: Could not connect to PocketBase: {e}")
+    pb = None
 
 FMP_API_KEY = os.getenv('FMP_API_KEY')
 Benzinga_API_KEY = os.getenv('BENZINGA_API_KEY')

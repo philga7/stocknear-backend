@@ -23,7 +23,7 @@ pb_password = os.getenv('POCKETBASE_PASSWORD')
 
 #berlin_tz = pytz.timezone('Europe/Berlin')
 new_york_tz = pytz.timezone('America/New_York')
-pb = PocketBase('http://127.0.0.1:8090')
+pb = PocketBase('http://pocketbase:8090')
 admin_data = pb.admins.auth_with_password(pb_admin_email, pb_password)
 
 # Set the system's timezone to Berlin at the beginning

@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+DOCKER_README.md
+*.md
+
+# Docker files (except docker-compose.yml)
+Dockerfile
+.dockerignore
+
+# Development files
+.env
+.env.example
+*.log
+logs/
+
+# Database files (will be mounted as volumes)
+*.db
+
+# Node modules (for Fastify)
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp 

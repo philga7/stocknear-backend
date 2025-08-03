@@ -19,12 +19,16 @@ load_dotenv()
 api_key = os.getenv('FMP_API_KEY')
 
 
-con = sqlite3.connect('stocks.db')
-
-cursor = con.cursor()
-cursor.execute("PRAGMA journal_mode = wal")
-cursor.execute("SELECT DISTINCT symbol FROM stocks")
-stock_symbols = [row[0] for row in cursor.fetchall()]
+try:
+    con = sqlite3.connect('stocks.db')
+    cursor = con.cursor()
+    cursor.execute("PRAGMA journal_mode = wal")
+    cursor.execute("SELECT DISTINCT symbol FROM stocks")
+    stock_symbols = [row[0] for row in cursor.fetchall()]
+    con.close()
+except Exception as e:
+    print(f"Warning: Could not connect to stocks.db: {e}")
+    stock_symbols = []
 
 
 key_ratios = [
