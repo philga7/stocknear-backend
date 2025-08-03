@@ -1,0 +1,106 @@
+services:
+  fastapi:
+    build: .
+    ports:
+      - '8000:8000'
+    volumes:
+      # Mount SQLite databases for persistent storage
+      - ./stocks.db:/app/stocks.db
+      - ./etf.db:/app/etf.db
+      - ./index.db:/app/index.db
+      - ./institute.db:/app/institute.db
+      - ./crypto.db:/app/crypto.db
+      # Mount JSON data directory
+      - ./json:/app/json
+      # Mount application logs
+      - ./logs:/app/logs
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6380
+      - REDIS_DB=0
+      - PYTHONUNBUFFERED=1
+      - ENVIRONMENT=development
+      - POCKETBASE_ADMIN_EMAIL=admin@stocknear.com
+      - POCKETBASE_ADMIN_PASSWORD=admin123
+      - OPENAI_API_KEY=dummy_key_for_development
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - stocknear-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - stocknear-network
+
+  # PocketBase service temporarily disabled due to image availability
+  # pocketbase:
+  #   image: docker.io/muchobien/pocketbase:latest
+  #   ports:
+  #     - '8090:8090'
+  #   volumes:
+  #     - pocketbase_data:/pb_data
+  #   environment:
+  #     - POCKETBASE_ADMIN_EMAIL=admin@stocknear.com
+  #     - POCKETBASE_ADMIN_PASSWORD=admin123
+  #   healthcheck:
+  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/api/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 30s
+  #   restart: unless-stopped
+  #   networks:
+  #     - stocknear-network
+
+  fastify:
+    build:
+      context: ./fastify
+      dockerfile: Dockerfile
+    ports:
+      - '2000:2000'
+    volumes:
+      - ./app/json:/app/json
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - stocknear-network
+
+volumes:
+  redis_data:
+    driver: local
+  pocketbase_data:
+    driver: local
+
+networks:
+  stocknear-network:
+    driver: bridge 

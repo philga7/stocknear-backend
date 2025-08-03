@@ -11,7 +11,7 @@ pb_admin_email = os.getenv('POCKETBASE_ADMIN_EMAIL')
 pb_password = os.getenv('POCKETBASE_PASSWORD')
 
 
-pb = PocketBase('http://127.0.0.1:8090')
+pb = PocketBase('http://pocketbase:8090')
 admin_data = pb.collection('_superusers').auth_with_password(pb_admin_email, pb_password)
 
 

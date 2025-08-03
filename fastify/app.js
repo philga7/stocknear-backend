@@ -40,6 +40,11 @@ fastify.register(require("@fastify/websocket"));
 
 const WebSocket = require("ws");
 
+// Health check endpoint
+fastify.get('/health', async (request, reply) => {
+  return { status: 'ok', timestamp: new Date().toISOString() };
+});
+
 
 function formatTimestampNewYork(timestamp) {
   const d = new Date(timestamp / 1e6);
@@ -213,7 +218,7 @@ const sendData = async () => {
 // Function to start the server
 function startServer() {
   if (!serverRunning) {
-    fastify.listen(2000, (err) => {
+    fastify.listen({ port: 2000, host: '0.0.0.0' }, (err) => {
       if (err) {
         console.error("Error starting server:", err);
         process.exit(1); // Exit the process if server start fails
